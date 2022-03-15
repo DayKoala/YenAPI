@@ -6,6 +6,8 @@ use pocketmine\utils\Config;
 
 use pocketmine\player\Player;
 
+use DayKoala\currency\CurrencyFormat;
+
 class JsonAccount implements Account{
 
     private Config $config;
@@ -25,7 +27,7 @@ class JsonAccount implements Account{
     }
 
     public function registerAccount(Player $player) : Void{
-        if(!isset($this->data[strtolower($player->getName())])) $this->data[strtolower($player->getName())] = ['xuid' => $player->getXuid(), 'format' => 'default'];
+        $this->data[strtolower($player->getName())] = ['xuid' => $player->getXuid(), 'format' => CurrencyFormat::DEFAULT_FORMAT];
     }
 
     public function unregisterAccount($player) : Void{
@@ -34,19 +36,19 @@ class JsonAccount implements Account{
         }
         if(isset($this->data[strtolower($player)])) unset($this->data[strtolower($player)]);
     }
-    
-    public function setFormat($player, String $format) : Void{
-        if($player instanceof Player){
-           $player = $player->getName();
-        }
-        return $this->data[strtolower($player)]['format'] = $format;
-    }
 
     public function myFormat($player) : String{
         if($player instanceof Player){
            $player = $player->getName();
         }
-        return $this->data[strtolower($player)]['format'] ?? 'default';
+        return $this->data[strtolower($player)]['format'] ?? CurrencyFormat::DEFAULT_FORMAT;
+    }
+
+    public function setFormat($player, String $format) : Void{
+        if($player instanceof Player){
+           $player = $player->getName();
+        }
+        return $this->data[strtolower($player)]['format'] = $format;
     }
 
     public function myXuid($player) : Int{

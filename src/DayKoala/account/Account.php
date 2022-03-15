@@ -26,16 +26,16 @@ interface Account{
 
     /**
      *  @param String|Player $player
+     *  @return String
+     */
+    public function myFormat($player) : String;
+
+    /**
+     *  @param String|Player $player
      *  @param String $format
      *  @return Void
      */
     public function setFormat($player, String $format) : Void;
-
-    /**
-     *  @param String|Player $player
-     *  @return String
-     */
-    public function myFormat($player) : String;
 
     /**
      *  @param String|Player $player
