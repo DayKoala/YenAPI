@@ -46,7 +46,7 @@ final class CurrencyFormat{
     }
 
     private static function isValid(Closure $closure) : Bool{
-        return strval($closure(mt_rand(1, 1000)));
+        return is_string($closure(mt_rand(1, 1000)));
     }
 
 }

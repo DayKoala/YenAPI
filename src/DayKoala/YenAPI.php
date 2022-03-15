@@ -5,18 +5,9 @@ namespace DayKoala;
 class YenAPI extends PluginBase implements Listener{
 
     private static $instance = null;
-    private static $commands = null;
 
     public static function getInstance() : self{
         return self::$instance;
-    }
-
-    public static function hasCommand(String $command) : Bool{
-        return isset(self::$commands[$command]);
-    }
-
-    public static function removeCommand(String $command) : Bool{
-        if(isset(self::$commands[$command])) unset(self::$commands[$command]);
     }
 
     private Account $account;
@@ -27,7 +18,6 @@ class YenAPI extends PluginBase implements Listener{
     public function onLoad(){
         CurrencyFormat::init();
 
-        self::$commands = ['' => new MyCurrencyCommand($this)];
         self::$instance = $this;
     }
 
@@ -38,6 +28,11 @@ class YenAPI extends PluginBase implements Listener{
         $this->provider = new JsonProvider($folder);
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
+
+        $this->getServer()->getCommandMap()->registerAll('YenAPI', [
+            'mycurrency' => new MyCurrencyCommand($this->properties->getString('command.mycurrency') ?? 'mycurrency', $this),
+            'myformat' => new MyFormatCommand($this->properties->getString('command.myformat') ?? 'myformat', $this)
+        ]);
     }
 
     public function onDisable(){
@@ -103,16 +98,12 @@ class YenAPI extends PluginBase implements Listener{
         return $id;
     }
 
-    public function reduceCurrency($player, Int|Float $amount) : Int{
-        return $this->setCurrency($player, $this->provider->myCurrency($player instanceof Player ? $player->getXuid() : $this->account->myXuid($player)) - $amount);
-    }
-
     public function myFormat($player) : String{
         return $this->account->myFormat($player);
     }
 
     public function setFormat($player, String $format) : Void{
-        if(CurrencyFormat::has($format)) $this->account->setFormat($player, $format);
+        if(CurrencyFormat::hasFormat($format)) $this->account->setFormat($player, $format);
     }
 
     public function fromFormat($player) : String{
